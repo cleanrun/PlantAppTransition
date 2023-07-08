@@ -14,7 +14,9 @@ enum PresentationOperation {
 
 final class PresentationAnimator: NSObject {
     
-    private let duration: TimeInterval = 0.3
+    private let duration: TimeInterval = 0.5
+    private let springDamping: CGFloat = 0.8
+    private let springVelocity: CGFloat = 1
     private let operation: PresentationOperation
     
     init(operation: PresentationOperation) {
@@ -71,11 +73,11 @@ final class PresentationAnimator: NSObject {
         
         detailVC.view.isHidden = true
         
-        UIView.animate(withDuration: duration, delay: 0, options: .curveEaseInOut, animations: {
+        UIView.animate(withDuration: duration, delay: 0, usingSpringWithDamping: springDamping, initialSpringVelocity: springVelocity, animations: {
             snapshotImageView.frame = containerView.convert(detailImageView.frame, from: detailVC.view)
         })
         
-        UIView.animate(withDuration: duration, delay: 0.05, options: .curveEaseInOut, animations: {
+        UIView.animate(withDuration: duration, delay: 0.05, usingSpringWithDamping: springDamping, initialSpringVelocity: springVelocity, animations: {
             snapshotDescriptionContainerView.frame = containerView.convert(detailVC.plantDescriptionContainerView.frame, from: detailVC.view)
             snapshotDescriptionContainerView.layer.cornerRadius = detailVC.plantDescriptionContainerView.layer.cornerRadius
             
@@ -113,11 +115,11 @@ final class PresentationAnimator: NSObject {
         
         detailVC.view.isHidden = true
         
-        UIView.animate(withDuration: duration, delay: 0, options: .curveEaseInOut, animations: {
+        UIView.animate(withDuration: duration, delay: 0, usingSpringWithDamping: springDamping, initialSpringVelocity: springVelocity, animations: {
             snapshotImageView.frame = containerView.convert(selectedCell.plantImageView.frame, from: selectedCell.contentView)
         })
         
-        UIView.animate(withDuration: duration, delay: 0.04, options: .curveEaseInOut, animations: {
+        UIView.animate(withDuration: duration, delay: 0.04, usingSpringWithDamping: springDamping, initialSpringVelocity: springVelocity, animations: {
             snapshotDescriptionContainerView.frame = containerView.convert(selectedCell.plantDescriptionContainerView.frame, from: selectedCell.contentView)
             snapshotDescriptionContainerView.layer.cornerRadius = selectedCell.plantDescriptionContainerView.layer.cornerRadius
             
