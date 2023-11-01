@@ -17,6 +17,8 @@ final class PresentationAnimator: NSObject {
     private let duration: TimeInterval = 0.5
     private let springDamping: CGFloat = 0.8
     private let springVelocity: CGFloat = 1
+    private let springBounce: CGFloat = 0.3
+    private let animationDelay: CGFloat = 0.05
     private let operation: PresentationOperation
     
     init(operation: PresentationOperation) {
@@ -73,20 +75,36 @@ final class PresentationAnimator: NSObject {
         
         detailVC.view.isHidden = true
         
-        UIView.animate(withDuration: duration, delay: 0, usingSpringWithDamping: springDamping, initialSpringVelocity: springVelocity, animations: {
-            snapshotImageView.frame = containerView.convert(detailImageView.frame, from: detailVC.view)
-        })
-        
-        UIView.animate(withDuration: duration, delay: 0.05, usingSpringWithDamping: springDamping, initialSpringVelocity: springVelocity, animations: {
-            snapshotDescriptionContainerView.frame = containerView.convert(detailVC.plantDescriptionContainerView.frame, from: detailVC.view)
-            snapshotDescriptionContainerView.layer.cornerRadius = detailVC.plantDescriptionContainerView.layer.cornerRadius
+        if #available(iOS 17.0, *) {
+            UIView.animate(springDuration: duration, bounce: springBounce, animations: {
+                snapshotImageView.frame = containerView.convert(detailImageView.frame, from: detailVC.view)
+            })
             
-        }, completion: { finished in
-            snapshotImageView.removeFromSuperview()
-            snapshotDescriptionContainerView.removeFromSuperview()
-            detailVC.view.isHidden = false
-            context.completeTransition(finished)
-        })
+            UIView.animate(springDuration: duration, bounce: springBounce, delay: animationDelay, animations: {
+                snapshotDescriptionContainerView.frame = containerView.convert(detailVC.plantDescriptionContainerView.frame, from: detailVC.view)
+                snapshotDescriptionContainerView.layer.cornerRadius = detailVC.plantDescriptionContainerView.layer.cornerRadius
+            }, completion: { finished in
+                snapshotImageView.removeFromSuperview()
+                snapshotDescriptionContainerView.removeFromSuperview()
+                detailVC.view.isHidden = false
+                context.completeTransition(finished)
+            })
+        } else {
+            UIView.animate(withDuration: duration, delay: 0, usingSpringWithDamping: springDamping, initialSpringVelocity: springVelocity, animations: {
+                snapshotImageView.frame = containerView.convert(detailImageView.frame, from: detailVC.view)
+            })
+            
+            UIView.animate(withDuration: duration, delay: animationDelay, usingSpringWithDamping: springDamping, initialSpringVelocity: springVelocity, animations: {
+                snapshotDescriptionContainerView.frame = containerView.convert(detailVC.plantDescriptionContainerView.frame, from: detailVC.view)
+                snapshotDescriptionContainerView.layer.cornerRadius = detailVC.plantDescriptionContainerView.layer.cornerRadius
+                
+            }, completion: { finished in
+                snapshotImageView.removeFromSuperview()
+                snapshotDescriptionContainerView.removeFromSuperview()
+                detailVC.view.isHidden = false
+                context.completeTransition(finished)
+            })
+        }
     }
     
     private func animateDismiss(from detailVC: PlantDetailViewController,
@@ -115,20 +133,34 @@ final class PresentationAnimator: NSObject {
         
         detailVC.view.isHidden = true
         
-        UIView.animate(withDuration: duration, delay: 0, usingSpringWithDamping: springDamping, initialSpringVelocity: springVelocity, animations: {
-            snapshotImageView.frame = containerView.convert(selectedCell.plantImageView.frame, from: selectedCell.contentView)
-        })
-        
-        UIView.animate(withDuration: duration, delay: 0.04, usingSpringWithDamping: springDamping, initialSpringVelocity: springVelocity, animations: {
-            snapshotDescriptionContainerView.frame = containerView.convert(selectedCell.plantDescriptionContainerView.frame, from: selectedCell.contentView)
-            snapshotDescriptionContainerView.layer.cornerRadius = selectedCell.plantDescriptionContainerView.layer.cornerRadius
+        if #available(iOS 17.0, *) {
+            UIView.animate(springDuration: duration, bounce: springBounce, animations: {
+                snapshotImageView.frame = containerView.convert(selectedCell.plantImageView.frame, from: selectedCell.contentView)
+            })
             
-        }, completion: { finished in
-            snapshotImageView.removeFromSuperview()
-            snapshotDescriptionContainerView.removeFromSuperview()
-            context.completeTransition(finished)
-        })
-        
+            UIView.animate(springDuration: duration, bounce: springBounce, delay: animationDelay, animations: {
+                snapshotDescriptionContainerView.frame = containerView.convert(selectedCell.plantDescriptionContainerView.frame, from: selectedCell.contentView)
+                snapshotDescriptionContainerView.layer.cornerRadius = selectedCell.plantDescriptionContainerView.layer.cornerRadius
+            }, completion: { finished in
+                snapshotImageView.removeFromSuperview()
+                snapshotDescriptionContainerView.removeFromSuperview()
+                context.completeTransition(finished)
+            })
+        } else {
+            UIView.animate(withDuration: duration, delay: 0, usingSpringWithDamping: springDamping, initialSpringVelocity: springVelocity, animations: {
+                snapshotImageView.frame = containerView.convert(selectedCell.plantImageView.frame, from: selectedCell.contentView)
+            })
+            
+            UIView.animate(withDuration: duration, delay: 0.04, usingSpringWithDamping: springDamping, initialSpringVelocity: springVelocity, animations: {
+                snapshotDescriptionContainerView.frame = containerView.convert(selectedCell.plantDescriptionContainerView.frame, from: selectedCell.contentView)
+                snapshotDescriptionContainerView.layer.cornerRadius = selectedCell.plantDescriptionContainerView.layer.cornerRadius
+                
+            }, completion: { finished in
+                snapshotImageView.removeFromSuperview()
+                snapshotDescriptionContainerView.removeFromSuperview()
+                context.completeTransition(finished)
+            })
+        }
     }
     
 }
